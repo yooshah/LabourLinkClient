@@ -1,18 +1,18 @@
 import { useState } from "react";
-import { useUsers, useUserId } from "../../hooks/useUsers";
+import { useUsers } from "../../Hooks/UserHooks";
 
-const Users = () => {
+const Users: React.FC = () => {
   const [page, setPage] = useState(1);
-  const [userIdSearch, setUserIdSearch] = useState<number | string>(""); // For user ID search
-  const [userTypeFilter, setUserTypeFilter] = useState<string>("all"); // User type filter (Client, Labour, Admin)
-  const limit = 5; // Users per page
+  const [userIdSearch, setUserIdSearch] = useState<number | string>(""); 
+  const [userTypeFilter, setUserTypeFilter] = useState<string>("all"); 
+  const limit = 5; 
   const { data: users, isLoading, error } = useUsers(page, limit);
 
-  // Filter users based on the search input (user ID only) and user type
+ 
   const filteredUsers = users?.filter((user) => {
     const matchesIdSearch = user.id.toString().includes(userIdSearch.toString());
-    const matchesUserType = userTypeFilter === "all" || user.type === userTypeFilter;
-    return matchesIdSearch && matchesUserType;
+    // const matchesUserType = userTypeFilter === "all" || user.type=== userTypeFilter;
+    // return matchesIdSearch && matchesUserType;
   });
 
   if (isLoading) return <p className="text-center text-lg">Loading...</p>;
@@ -20,7 +20,7 @@ const Users = () => {
 
   return (
     <div className="p-6 bg-blue-50 rounded-lg shadow-lg">
-      {/* Search Input for user ID */}
+      
       <div className="mb-6 flex flex-col md:flex-row gap-4">
         <input
           type="text"
@@ -30,7 +30,7 @@ const Users = () => {
           onChange={(e) => setUserIdSearch(e.target.value)}
         />
 
-        {/* Filter by user type */}
+      
         <select
           value={userTypeFilter}
           onChange={(e) => setUserTypeFilter(e.target.value)}
@@ -43,7 +43,7 @@ const Users = () => {
         </select>
       </div>
 
-      {/* Display paginated users */}
+  
       <div className="bg-white rounded-md shadow-md">
         <table className="min-w-full text-left w-full">
           <thead className="bg-blue-600 text-white">
@@ -59,18 +59,26 @@ const Users = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredUsers?.map((user) => (
-              <tr key={user.id} className="border-b hover:bg-blue-50">
-                <td className="py-1 px-2">{user.id}</td>
-                <td className="py-1 px-2">{user.name}</td>
-                <td className="py-1 px-2">{user.email}</td>
-                <td className="py-1 px-2">{user.phone}</td>
-                <td className="py-1 px-2">{user.active ? "Yes" : "No"}</td>
-                <td className="py-1 px-2">{new Date(user.createdAt).toLocaleDateString()}</td>
-                <td className="py-1 px-2">{user.profileCompleted ? "Yes" : "No"}</td>
-                <td className="py-1 px-2">{user.type}</td>
+            {filteredUsers?.length ? (
+              filteredUsers.map((user) => (
+                <tr key={user.id} className="border-b hover:bg-blue-50">
+                  <td className="py-1 px-2">{user.id}</td>
+                  <td className="py-1 px-2">{user.name}</td>
+                  <td className="py-1 px-2">{user.email}</td>
+                  <td className="py-1 px-2">{user.phone}</td>
+                  <td className="py-1 px-2">{user.active ? "Yes" : "No"}</td>
+                  <td className="py-1 px-2">{new Date(user.createdAt).toLocaleDateString()}</td>
+                  <td className="py-1 px-2">{user.profileCompleted ? "Yes" : "No"}</td>
+                  <td className="py-1 px-2">userType</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={8} className="py-2 px-4 text-center text-gray-500">
+                  No users found.
+                </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
@@ -87,7 +95,8 @@ const Users = () => {
         <span className="text-lg font-semibold text-blue-700">Page {page}</span>
         <button
           onClick={() => setPage((prev) => prev + 1)}
-          className="px-6 py-3 bg-blue-500 text-white rounded-md transition-colors hover:bg-blue-600"
+          disabled={!users || users.length < limit} 
+          className="px-6 py-3 bg-blue-500 text-white rounded-md transition-colors hover:bg-blue-600 disabled:opacity-50"
         >
           Next
         </button>

@@ -1,31 +1,38 @@
-import { useGetSkills, useAddSkill, useDeleteSkill } from "../../hooks/UseSkills";
 import { useState } from "react";
+import { useAddSkill, useDeleteSkill, useGetSkills } from "../../Hooks/SkillHooks";
 
-const Skills = () => {
-  const [skillName, setSkillName] = useState("");
+const Skills: React.FC = () => {
+  const [skillname, setSkillname] = useState("");
   const [page, setPage] = useState(1);
   const limit = 5;
+
+  // Fetch skills using the custom hook
   const { data: skills, isLoading, isError } = useGetSkills(page, limit);
 
   const addSkillMutation = useAddSkill();
-  const deleteSkillMutation = useDeleteSkill(); // Mutation for delete
+  const deleteSkillMutation = useDeleteSkill();
 
+  // Handle adding new skill
   const handleAddSkill = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!skillName.trim()) return;
+    if (!skillname.trim()) return;
 
-    addSkillMutation.mutate({ title: skillName });
-    setSkillName(""); // Clear input field after submission
+    addSkillMutation.mutate({ name: skillname });
+    setSkillname("");
   };
 
-  const handleDeleteSkill = (id: number) => {
-    deleteSkillMutation.mutate(id); // Call delete mutation with skill id
+  // Handle deleting skill
+  const handleDeleteSkill = (id: string) => {
+    deleteSkillMutation.mutate(id);
   };
 
+  // Handle pagination
   const handlePageChange = (newPage: number) => {
-    if (newPage < 1) return;
+    if (newPage < 1) return; // Prevent going below page 1
     setPage(newPage);
   };
+
+  const isNextDisabled = !skills || skills.length < limit; // Disable "Next" button if fewer than `limit` skills are returned
 
   if (isLoading) return <p className="text-center text-gray-500">Loading skills...</p>;
   if (isError) return <p className="text-center text-red-500">Error fetching skills.</p>;
@@ -39,8 +46,8 @@ const Skills = () => {
         <input
           type="text"
           placeholder="Enter skill name"
-          value={skillName}
-          onChange={(e) => setSkillName(e.target.value)}
+          value={skillname}
+          onChange={(e) => setSkillname(e.target.value)}
           className="flex-1 p-2 border border-gray-300 rounded-md"
         />
         <button
@@ -62,20 +69,28 @@ const Skills = () => {
             </tr>
           </thead>
           <tbody>
-            {skills?.map((skill) => (
-              <tr key={skill.id} className="hover:bg-gray-100">
-                <td className="p-3 border border-gray-300 text-center">{skill.id}</td>
-                <td className="p-3 border border-gray-300 text-center">{skill.title}</td>
-                <td className="p-3 border border-gray-300 text-center">
-                  <button
-                    onClick={() => handleDeleteSkill(skill.id)}
-                    className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-                  >
-                    Delete
-                  </button>
+            {skills?.length ? (
+              skills.map((skill) => (
+                <tr key={skill.skillId} className="hover:bg-gray-100">
+                  <td className="p-3 border border-gray-300 text-center">{skill.skillId}</td>
+                  <td className="p-3 border border-gray-300 text-center">{skill.skillName}</td>
+                  <td className="p-3 border border-gray-300 text-center">
+                    <button
+                      onClick={() => handleDeleteSkill(skill.skillId)}
+                      className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={3} className="py-2 px-4 text-center text-gray-500">
+                  No skills found.
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
@@ -84,8 +99,8 @@ const Skills = () => {
       <div className="mt-4 flex justify-center gap-3">
         <button
           onClick={() => handlePageChange(page - 1)}
-          className="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400"
           disabled={page <= 1}
+          className="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400 disabled:opacity-50"
         >
           Previous
         </button>
@@ -94,7 +109,8 @@ const Skills = () => {
         </span>
         <button
           onClick={() => handlePageChange(page + 1)}
-          className="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400"
+          disabled={isNextDisabled} // Disable "Next" if no more data
+          className="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400 disabled:opacity-50"
         >
           Next
         </button>

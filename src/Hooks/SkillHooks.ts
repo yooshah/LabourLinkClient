@@ -1,45 +1,17 @@
-
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
-
-
+import { fetchSkills,addSkill,deleteSkill } from "../Services/Admin/SkillServices";
 
 export interface Skills {
-  id: number;
-  title: string;
+  skillId: string;
+  skillName: string;
 }
-
-export const fetchSkills = async (page: number, limit: number): Promise<Skills[]> => {
-  const { data } = await axios.get<Skills[]>(
-    `https://jsonplaceholder.typicode.com/todos?page=${page}&_limit=${limit}`
-  );
-  return data;
-};
-
-export const addSkill = async (newSkill: Omit<Skills, "id">) => {
-  const { data } = await axios.post<Skills>(
-    "https://jsonplaceholder.typicode.com/users",
-    newSkill
-  );
-  return data;
-};
-
-export const deleteSkill = async (skillId: number) => {
-  await axios.delete(`https://jsonplaceholder.typicode.com/todos/${skillId}`);
-  return skillId;
-};
-
-
-
-
 
 
 export const useGetSkills = (page: number, limit: number = 5) => {
   return useQuery({
     queryKey: ["Skill", page],
     queryFn: () => fetchSkills(page, limit),
-    placeholderData: (previousData) => previousData,
+    placeholderData: (previousData) => previousData ?? [],
   });
 };
 
@@ -60,7 +32,6 @@ export const useAddSkill = () => {
   });
 };
 
-
 export const useDeleteSkill = () => {
   const queryClient = useQueryClient();
 
@@ -68,7 +39,7 @@ export const useDeleteSkill = () => {
     mutationFn: deleteSkill,
     onSuccess: (deletedSkillId) => {
       queryClient.setQueryData<Skills[]>(["Skill"], (oldSkills = []) =>
-        oldSkills.filter((skill) => skill.id !== deletedSkillId)
+        oldSkills.filter((skill) => skill.skillId !== deletedSkillId)
       );
     },
     onError: (error) => {
