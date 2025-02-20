@@ -4,7 +4,12 @@ import {
   addSkill,
   deleteSkill,
 } from "../Services/Admin/SkillServices";
-import { fetchSearchSkills } from "../Services/User/SkillServices";
+import {
+  fetchAllSkill,
+  fetchSearchSkills,
+  postAJob,
+} from "../Services/User/SkillServices";
+import toast from "react-hot-toast";
 
 export interface Skills {
   skillId: string;
@@ -58,5 +63,38 @@ export const useSkillSearch = (searchParams: string) => {
     queryFn: () => fetchSearchSkills(searchParams),
     enabled: !!searchParams, // Only fetch when there is input
     staleTime: 60000, // Cache the results for 1 minute
+  });
+};
+
+export const useGetAllSkill = () => {
+  return useQuery({
+    queryKey: ["allSkill"],
+    queryFn: () => fetchAllSkill(),
+  });
+};
+
+// export const usePostJobMutation = () => {
+//   return useMutation(postAJob);
+// };
+
+// const { isLoading, mutate } = useMutation({
+//   mutationFn: PostJob,
+//   onSuccess: () => {
+//     toast.success("Successuffly Create Job Post");
+//   },
+// });
+
+export const usePostJob = () => {
+  return useMutation({
+    mutationFn: postAJob,
+    onSuccess: (data) => {
+      console.log(data);
+      toast.success("Job posted successfully!");
+      // You can add additional success handling here
+      // Like clearing form, redirecting, etc.
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to post job");
+    },
   });
 };

@@ -2,6 +2,8 @@ import { Search, MapPin, Plus, Bell, MessageSquare, User } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useSkillSearch } from "../../../Hooks/SkillHooks";
 import { useMunicipalitySearch } from "../../../Hooks/MunicipalityHooks";
+import { Link } from "react-router-dom";
+import AccounDropdown from "../Dropdown/AccountDropdown";
 
 const UserNavbar = () => {
   const [formData, setFormData] = useState({ skill: "", muncipality: "" });
@@ -60,7 +62,11 @@ const UserNavbar = () => {
     <header className="py-4 px-4 md:px-6 border-b bg-white shadow-md">
       <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between">
         {/* Brand */}
-        <div className="text-purple-600 font-bold text-xl">Labour Link</div>
+        <Link to="/employer/homepage">
+          <div className="text-purple-600 font-bold text-xl pointer-cursor">
+            Labour Link
+          </div>
+        </Link>
 
         {/* Search Bar */}
         <div className="flex flex-wrap items-center bg-white border rounded-full px-4 py-2 relative shadow-sm w-full md:w-auto mt-3 md:mt-0">
@@ -73,7 +79,7 @@ const UserNavbar = () => {
               className="w-full md:w-[180px] pl-8 pr-3 py-1 outline-none"
               value={formData.skill}
               name="skill"
-              onBlur={() => setShowSkillDropdown(false)}
+              // onBlur={() => setShowSkillDropdown(false)}
               onChange={handleInputChange}
             />
             {showSkillDropdown && (
@@ -113,7 +119,7 @@ const UserNavbar = () => {
               className="w-full md:w-[180px] pl-8 pr-3 py-1 outline-none"
               name="muncipality"
               value={formData.muncipality}
-              onBlur={() => setShowSkillDropdown(false)}
+              // onBlur={() => setShowMunicipalityDropdown(false)}
               onChange={handleInputChange}
             />
             {showMunicipalityDropdown && (
@@ -149,10 +155,14 @@ const UserNavbar = () => {
 
         {/* Icons Section */}
         <div className="flex items-center space-x-4 mt-3 md:mt-0">
-          <Plus className="h-5 w-5 text-gray-600 cursor-pointer hover:text-purple-600" />
+          <Link to="/employePostjob">
+            <Plus className="h-5 w-5 text-gray-600 cursor-pointer hover:text-purple-600" />
+          </Link>
           <Bell className="h-5 w-5 text-gray-600 cursor-pointer hover:text-purple-600" />
           <MessageSquare className="h-5 w-5 text-gray-600 cursor-pointer hover:text-purple-600" />
-          <User className="h-5 w-5 text-gray-600 cursor-pointer hover:text-purple-600" />
+
+          {/* <User className="h-5 w-5 text-gray-600 cursor-pointer hover:text-purple-600" /> */}
+          <AccounDropdown />
         </div>
       </div>
     </header>

@@ -3,20 +3,26 @@ import axios from "axios";
 interface Municipality {
   municipalityId: number;
   name: string;
-  state?: string; 
-  isActive:Boolean;
+  state?: string;
+  isActive: boolean;
 }
 
-export const fetchMunicipalities = async (page: number, limit: number): Promise<Municipality[]> => {
-  const { data } = await axios.get(`https://localhost:7234/api/Muncipality/muncipalities?_page=${page}&_limit=${limit}`);
+export const fetchMunicipalities = async (
+  page: number,
+  limit: number
+): Promise<Municipality[]> => {
+  const { data } = await axios.get(
+    `https://localhost:7234/api/Muncipality/muncipalities?_page=${page}&_limit=${limit}`
+  );
   // console.log(data);
-  
-  return data.data; 
+
+  return data.data;
 };
 
-
-
-export const addMunicipality = async (newMunicipality: { name: string; state: string; }) => {
+export const addMunicipality = async (newMunicipality: {
+  name: string;
+  state: string;
+}) => {
   const { data } = await axios.post<Municipality>(
     "https://jsonplaceholder.typicode.com/users",
     newMunicipality
@@ -25,6 +31,15 @@ export const addMunicipality = async (newMunicipality: { name: string; state: st
 };
 
 export const deleteMuncipality = async (Id: number) => {
-  await axios.delete(`https://localhost:7234/api/Muncipality/deletemuncipality/${Id}`);
+  await axios.delete(
+    `https://localhost:7234/api/Muncipality/deletemuncipality/${Id}`
+  );
   return Id;
+};
+
+export const fetchAllMuncipality = async () => {
+  const { data } = await axios.get(
+    "https://localhost:7234/api/Muncipality/muncipalities"
+  );
+  return data.data;
 };
