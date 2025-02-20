@@ -3,6 +3,7 @@ import {
   fetchMunicipalities,
   addMunicipality,
   deleteMuncipality,
+  fetchAllMuncipality,
 } from "../Services/Admin/MunicipalityServices";
 import { fetchSearchMunicipalities } from "../Services/User/MunicipalityServices";
 interface Municipality {
@@ -64,5 +65,12 @@ export const useMunicipalitySearch = (searchKey: string) => {
     queryFn: () => fetchSearchMunicipalities(searchKey),
     enabled: !!searchKey, // Only fetch when there is input
     staleTime: 60000, // Cache results for 1 minute
+  });
+};
+
+export const useGetAllMuncipalities = () => {
+  return useQuery({
+    queryKey: ["allMuncipality"],
+    queryFn: () => fetchAllMuncipality(),
   });
 };

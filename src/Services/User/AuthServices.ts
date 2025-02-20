@@ -14,4 +14,5 @@ export const loginUser = async (credential: LoginCredentials) => {
     }
   );
   console.log(response);
+  return response.data.message;
 };
