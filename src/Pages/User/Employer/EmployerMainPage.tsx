@@ -51,6 +51,24 @@ const ClientHome = () => {
       image: "/public/assets/worker-avatar.png",
       location: "Kottakkal",
     },
+    {
+      id: 5,
+      name: "Suhail",
+      role: "Plumbing | Electrician",
+      rating: 4.0,
+      status: "active",
+      image: "/public/assets/worker-avatar.png",
+      location: "Kottakkal",
+    },
+    {
+      id: 6,
+      name: "Hakeem",
+      role: "Plumbing | Electrician",
+      rating: 4.0,
+      status: "active",
+      image: "/public/assets/worker-avatar.png",
+      location: "Kottakkal",
+    },
   ];
 
   return (

@@ -3,7 +3,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { useGetAllSkill } from "../../../Hooks/SkillHooks";
 
 interface SkillDropdownProps {
-  onSelectSkill: (value: string) => void;
+  onSelectSkill: (value: { skillId: string; skillName: string }) => void;
 
   required?: boolean;
 }
@@ -37,7 +37,7 @@ export default function SkillDropdown({
       onChange={(_, value) => {
         if (value) {
           console.log(value.skillId);
-          onSelectSkill(value.skillId);
+          onSelectSkill(value);
         }
       }}
       renderInput={(params) => (

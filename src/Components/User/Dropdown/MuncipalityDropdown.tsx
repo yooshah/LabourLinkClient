@@ -2,11 +2,16 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { useGetAllMuncipalities } from "../../../Hooks/MunicipalityHooks";
 
-interface ComboBoxProps {
-  onSelectMunicipality: (value: string) => void; // Callback function to set the selected municipality
+interface MuncipalityDropDownProps {
+  onSelectMunicipality: (value: {
+    municipalityId: string;
+    name: string;
+  }) => void; // Callback function to set the selected municipality
 }
 
-export default function ComboBox({ onSelectMunicipality }: ComboBoxProps) {
+export default function MuncipalityDropDown({
+  onSelectMunicipality,
+}: MuncipalityDropDownProps) {
   const { data, isLoading, error } = useGetAllMuncipalities();
 
   if (isLoading || error)
@@ -24,13 +29,16 @@ export default function ComboBox({ onSelectMunicipality }: ComboBoxProps) {
       disablePortal
       options={data || []}
       sx={{ width: 300 }}
-      getOptionLabel={(option: { municipalityId: number; name: string }) =>
+      getOptionLabel={(option: { municipalityId: string; name: string }) =>
         option.name
       }
       onChange={(_, value) => {
         if (value) {
           console.log(value.municipalityId);
-          onSelectMunicipality(String(value.municipalityId)); // Update the selected municipality in the parent component
+          onSelectMunicipality({
+            municipalityId: String(value.municipalityId),
+            name: value.name,
+          }); // Update the selected municipality in the parent component
         }
       }}
       renderInput={(params) => (

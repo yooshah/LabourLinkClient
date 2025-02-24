@@ -1,7 +1,8 @@
-import { useQuery, useMutation, useQueryClient  } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { getAllJobPostbyClientId } from "../Services/User/JobServices";
 
-export interface  JobPosts {
+export interface JobPosts {
   id: number;
   ClientId: number;
   name: string;
@@ -15,30 +16,30 @@ export interface  JobPosts {
   CreateAt: Date;
 }
 
-const fetchJobPosts = async (page: number, limit: number): Promise<JobPosts[]> => {
+const fetchJobPosts = async (
+  page: number,
+  limit: number
+): Promise<JobPosts[]> => {
   const { data } = await axios.get<JobPosts[]>(
     `https://jsonplaceholder.typicode.com/posts?_page=${page}&_limit=${limit}`
   );
   return data;
 };
 
-
 export const deleteJobPost = async (id: number) => {
   await axios.delete(`https://jsonplaceholder.typicode.com/posts/${id}`);
   return id;
 };
-
 
 export const useJobPosts = (page: number, limit: number = 5) => {
   return useQuery({
     queryKey: ["JobPosts", page],
     queryFn: () => fetchJobPosts(page, limit),
     placeholderData: (previousData) => {
-      return previousData; 
+      return previousData;
     },
   });
 };
-
 
 export const useDeleteJobPost = () => {
   const queryClient = useQueryClient();
@@ -46,12 +47,10 @@ export const useDeleteJobPost = () => {
   return useMutation({
     mutationFn: deleteJobPost,
     onSuccess: (deletedJobPostId) => {
-      
       queryClient.setQueryData<JobPosts[]>(["JobPosts"], (oldJobPosts = []) =>
         oldJobPosts.filter((jobPosts) => jobPosts.id !== deletedJobPostId)
       );
 
-      
       queryClient.invalidateQueries({ queryKey: ["JobPosts"] });
     },
     onError: (error) => {
@@ -60,4 +59,9 @@ export const useDeleteJobPost = () => {
   });
 };
 
-
+export const useVeiwAllJobPostbyEmployer = (id: string) => {
+  return useQuery({
+    queryKey: ["ClientJobPost"],
+    queryFn: () => getAllJobPostbyClientId(id),
+  });
+};

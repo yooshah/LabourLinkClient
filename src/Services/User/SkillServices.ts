@@ -20,7 +20,7 @@ export const fetchAllSkill = async () => {
 
 export const postAJob = async (formData: FormData) => {
   const response = await axios.post(
-    "https://localhost:7299/api/Job/createjobpost",
+    "https://localhost:7299/api/job/createjobpost",
     formData,
     {
       headers: {

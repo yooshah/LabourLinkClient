@@ -5,6 +5,7 @@ import SkillDropdown from "../../../Components/User/Dropdown/SkillDropDown";
 import { postAJob } from "../../../Services/User/SkillServices";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import JobPostInput from "../../../Components/User/UserInputs/JobPostInput";
 
 interface JobPostingForm {
   title: string;
@@ -12,22 +13,30 @@ interface JobPostingForm {
   startDate: string;
   preferredTime: "day" | "night";
   municipalityId: string;
-  skill1: string;
-  skill2?: string;
+  municipalityName: string;
+  skill1Id: string;
+  skill1Name: string;
+  skill2Id?: string;
+  skill2Name?: string;
   description: string;
   image?: File;
 }
 
 const PostJobForm = () => {
   const navigate = useNavigate();
+
+  const [showSkill2, setShowSkill2] = useState(false);
   const [formData, setFormData] = useState<JobPostingForm>({
     title: "",
     wage: "",
     startDate: "",
     preferredTime: "day",
     municipalityId: "",
-    skill1: "",
-    skill2: "",
+    municipalityName: "",
+    skill1Id: "",
+    skill1Name: "",
+    skill2Id: "",
+    skill2Name: "",
     description: "",
   });
 
@@ -58,12 +67,15 @@ const PostJobForm = () => {
     console.log("Form submitted:", formData);
     const jobData = new FormData();
 
-    jobData.append("clientId", crypto.randomUUID());
+    // jobData.append("clientId", crypto.randomUUID());
+    jobData.append("clientId", "286195A2-52AE-4584-A39F-948CB2567242");
     jobData.append("title", formData.title);
     jobData.append("wage", formData.wage);
     jobData.append("startDate", formData.startDate);
     jobData.append("muncipalityId", formData.municipalityId);
-    jobData.append("skillId1", formData.skill1);
+    jobData.append("muncipalityName", formData.municipalityName);
+    jobData.append("skillId1", formData.skill1Id);
+    jobData.append("skill1Name", formData.skill1Name);
     jobData.append("prefferedTime", formData.preferredTime);
 
     jobData.append("description", formData.description);
@@ -71,18 +83,21 @@ const PostJobForm = () => {
       jobData.append("image", formData.image);
     }
 
-    if (formData.skill2) {
-      jobData.append("skillId2", formData.skill2);
+    if (showSkill2 && formData.skill2Id && formData.skill2Name) {
+      jobData.append("skillId2", formData.skill2Id);
+      jobData.append("skill2Name", formData.skill2Name);
     }
 
-    if (!formData.skill1) {
+    if (!formData.skill1Id) {
       toast.error("Select the Skill required");
     }
     if (!formData.municipalityId) {
       toast.error("Select the Muncipality");
     }
 
-    if (formData.skill1 && formData.municipalityId) {
+    if (formData.skill1Id && formData.municipalityId) {
+      console.log("ghjk");
+
       const result = await postAJob(jobData);
       console.log(result.statusCode);
       if (result.statusCode == 200) {
@@ -94,22 +109,43 @@ const PostJobForm = () => {
       }
     }
   };
-  const handleMunicipalityChange = (value: string) => {
+  const handleMunicipalityChange = (municipality: {
+    municipalityId: string;
+    name: string;
+  }) => {
     setFormData((prev) => ({
       ...prev,
-      municipalityId: value,
+      municipalityId: municipality.municipalityId,
+      municipalityName: municipality.name,
     }));
   };
-  const handleSkill1Change = (value: string) => {
+  const handleSkill1Change = (value: {
+    skillId: string;
+    skillName: string;
+  }) => {
     setFormData((prev) => ({
       ...prev,
-      skill1: value,
+      skill1Id: value.skillId,
+      skill1Name: value.skillName,
     }));
   };
-  const handleSkill2Change = (value: string) => {
+  const handleSkill2Change = (value: {
+    skillId: string;
+    skillName: string;
+  }) => {
     setFormData((prev) => ({
       ...prev,
-      skill2: value,
+      skill2Id: value.skillId,
+      skill2Name: value.skillName,
+    }));
+  };
+
+  const handleRemoveSkillButton = () => {
+    setShowSkill2(false);
+    setFormData((prev) => ({
+      ...prev,
+      skill2Id: "",
+      skill2Name: "",
     }));
   };
 
@@ -123,51 +159,30 @@ const PostJobForm = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Left Column */}
             <div className="space-y-4">
-              <div>
-                <label htmlFor="title" className="block mb-2 font-medium">
-                  Title *
-                </label>
-                <input
-                  id="title"
-                  name="title"
-                  required
-                  placeholder="Enter job title"
-                  value={formData.title}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border rounded-md"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="wage" className="block mb-2 font-medium">
-                  Wage *
-                </label>
-                <input
-                  id="wage"
-                  name="wage"
-                  required
-                  type="number"
-                  placeholder="Enter wage"
-                  value={formData.wage}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border rounded-md"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="startDate" className="block mb-2 font-medium">
-                  Start Date *
-                </label>
-                <input
-                  id="startDate"
-                  name="startDate"
-                  required
-                  type="date"
-                  value={formData.startDate}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border rounded-md"
-                />
-              </div>
+              <JobPostInput
+                inputfieldName="title"
+                value={formData.title}
+                placeHolder={"Enter job title"}
+                handleInputChange={handleInputChange}
+                type="text"
+                required={true}
+              />
+              <JobPostInput
+                inputfieldName="wage"
+                value={formData.wage}
+                placeHolder={"Enter wage"}
+                handleInputChange={handleInputChange}
+                type="number"
+                required={true}
+              />
+              <JobPostInput
+                inputfieldName="startDate"
+                value={formData.startDate}
+                placeHolder={""}
+                handleInputChange={handleInputChange}
+                type="date"
+                required={true}
+              />
 
               <div>
                 <label className="block mb-2 font-medium">
@@ -205,95 +220,53 @@ const PostJobForm = () => {
 
             <div className="space-y-4">
               <div>
-                <label className="block mb-2 font-medium">Muncipality</label>
+                <label className="block mb-2 font-medium">Muncipality *</label>
                 <MuncipalityDropDown
                   onSelectMunicipality={handleMunicipalityChange}
                 />
               </div>
 
               <div>
-                <label className="block mb-2 font-medium">Skill1</label>
+                <label className="block mb-2 font-medium">Skill1 *</label>
                 <SkillDropdown
                   required={true}
                   onSelectSkill={handleSkill1Change}
                 />
               </div>
-              <div>
-                <label className="block mb-2 font-medium">
-                  Skill2(optional)
-                </label>
-                <SkillDropdown
-                  required={true}
-                  onSelectSkill={handleSkill2Change}
-                />
-              </div>
-              {/* <div>
-                <label htmlFor="skill1" className="block mb-2 font-medium">
-                  Skill 1 *
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={searchSkill1}
-                    onChange={(e) => setSearchSkill1(e.target.value)}
-                    onFocus={() => setShowSkill1Dropdown(true)}
-                    placeholder="Search skill"
-                    className="w-full px-3 py-2 border rounded-md"
-                  />
-                  <Search className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
-                  {showSkill1Dropdown && skillResults1 && (
-                    <div className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg max-h-48 overflow-y-auto">
-                      {skillResults1.map((item, index) => (
-                        <div
-                          key={index}
-                          className="px-3 py-2 cursor-pointer hover:bg-purple-50"
-                          onClick={() => {
-                            setFormData((prev) => ({ ...prev, skill1: item }));
-                            setSearchSkill1(item);
-                            setShowSkill1Dropdown(false);
-                          }}
-                        >
-                          {item}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div> */}
 
-              {/* <div>
-                <label htmlFor="skill2" className="block mb-2 font-medium">
-                  Skill 2 (Optional)
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={searchSkill2}
-                    onChange={(e) => setSearchSkill2(e.target.value)}
-                    onFocus={() => setShowSkill2Dropdown(true)}
-                    placeholder="Search skill"
-                    className="w-full px-3 py-2 border rounded-md"
-                  />
-                  <Search className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
-                  {showSkill2Dropdown && skillResults2 && (
-                    <div className="absolute z-10 w-full mt-1 bg-white border rounded-md shadow-lg max-h-48 overflow-y-auto">
-                      {skillResults2.map((item, index) => (
-                        <div
-                          key={index}
-                          className="px-3 py-2 cursor-pointer hover:bg-purple-50"
-                          onClick={() => {
-                            setFormData((prev) => ({ ...prev, skill2: item }));
-                            setSearchSkill2(item);
-                            setShowSkill2Dropdown(false);
-                          }}
-                        >
-                          {item}
-                        </div>
-                      ))}
-                    </div>
-                  )}
+              {!showSkill2 && (
+                <div className="block mb-2 font-medium">
+                  <span
+                    className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 cursor-pointer"
+                    onClick={() => setShowSkill2(true)}
+                  >
+                    Add Skill
+                  </span>
                 </div>
-              </div> */}
+              )}
+
+              {showSkill2 && (
+                <div>
+                  <label className="block mb-2 font-medium">
+                    Skill2(optional)
+                  </label>
+                  <SkillDropdown
+                    required={false}
+                    onSelectSkill={handleSkill2Change}
+                  />
+                </div>
+              )}
+
+              {showSkill2 && (
+                <div className="block mb-2 font-medium">
+                  <span
+                    className="px-4 py-2  bg-red-700 text-white rounded-md hover:bg-red-800 cursor-pointer"
+                    onClick={handleRemoveSkillButton}
+                  >
+                    Remove Skill
+                  </span>
+                </div>
+              )}
 
               <div>
                 <label className="block mb-2 font-medium">Upload Image *</label>

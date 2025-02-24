@@ -1,4 +1,4 @@
-import { Search, MapPin, Plus, Bell, MessageSquare, User } from "lucide-react";
+import { Search, MapPin, Plus, Bell, MessageSquare } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useSkillSearch } from "../../../Hooks/SkillHooks";
 import { useMunicipalitySearch } from "../../../Hooks/MunicipalityHooks";
