@@ -1,25 +1,17 @@
-import { useState } from "react";
+import { NavLink, Outlet } from "react-router-dom";
 import { 
   FaTachometerAlt, FaUsers, FaUserCog, FaBook, 
-  FaServicestack, FaSignOutAlt, FaUserFriends, 
-  FaEye, FaHeart, FaBookmark 
+  FaServicestack, FaSignOutAlt 
 } from "react-icons/fa";
-import Users from "../../Pages/Admin/Users";
-import JobPosts from "../../Pages/Admin/JobPosts";
-import Skills from "../../Pages/Admin/Skills";
-import Municipalities from "../../Pages/Admin/Municipalities";
-import Dashboard from "../../Pages/Admin/Dashboard";
 
 const Home = () => {
-  const [active, setActive] = useState<string>("Dashboard");
-
   const menuItems = [
-    { name: "Dashboard", icon: <FaTachometerAlt /> },
-    { name: "Users", icon: <FaUsers /> },
-    { name: "JobPosts", icon: <FaUserCog /> },
-    { name: "Municipalities", icon: <FaBook /> },
-    { name: "Skills", icon: <FaServicestack /> },
-    { name: "Logout", icon: <FaSignOutAlt /> },
+    { name: "Dashboard", path: "/", icon: <FaTachometerAlt /> },
+    { name: "Users", path: "/users", icon: <FaUsers /> },
+    { name: "JobPosts", path: "/jobposts", icon: <FaUserCog /> },
+    { name: "Municipalities", path: "/municipalities", icon: <FaBook /> },
+    { name: "Skills", path: "/skills", icon: <FaServicestack /> },
+    { name: "Logout", path: "/logout", icon: <FaSignOutAlt /> },
   ];
 
   return (
@@ -27,33 +19,27 @@ const Home = () => {
       {/* Sidebar */}
       <div className="w-64 bg-gray-900 text-white fixed h-full flex flex-col p-4">
         <h1 className="text-2xl font-bold mb-6 text-center">Admin Panel</h1>
-        <div className="flex flex-col flex-grow">
+        <nav className="flex flex-col flex-grow">
           {menuItems.map((item) => (
-            <div
+            <NavLink
               key={item.name}
-              onClick={() => setActive(item.name)}
-              className={`flex items-center p-3 text-lg rounded-lg mb-3 w-full cursor-pointer transition-all duration-300 
-                ${active === item.name ? "opacity-100" : "opacity-50 hover:opacity-100"}
-              `}
+              to={item.path}
+              className={({ isActive }) =>
+                `flex items-center p-3 text-lg rounded-lg mb-3 w-full cursor-pointer transition-all duration-300 ${
+                  isActive ? "bg-gray-700" : "opacity-50 hover:opacity-100"
+                }`
+              }
             >
               <span className="mr-3 text-xl">{item.icon}</span>
               {item.name}
-            </div>
+            </NavLink>
           ))}
-        </div>
+        </nav>
       </div>
 
-      {/* Main Content */}
+      {/* Dynamic Content */}
       <div className="ml-64 p-6 flex-1">
-     
-
-       
-        {/* Dynamic Page Rendering */}
-        {active === "Dashboard" && <Dashboard/>}
-        {active === "Users" && <Users />}
-        {active === "JobPosts" && <JobPosts />}
-        {active === "Skills" && <Skills />}
-        {active === "Municipalities" && <Municipalities />}
+        <Outlet />
       </div>
     </div>
   );
