@@ -3,6 +3,7 @@ import axios from "axios";
 interface LoginCredentials {
   username: string;
   password: string;
+
 }
 
 export const loginUser = async (credential: LoginCredentials) => {

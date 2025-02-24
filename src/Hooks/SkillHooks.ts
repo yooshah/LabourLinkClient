@@ -29,14 +29,13 @@ export const useAddSkill = () => {
 
   return useMutation({
     mutationFn: addSkill,
-    onSuccess: (newSkill) => {
-      queryClient.setQueryData<Skills[]>(["Skill"], (oldSkills = []) => [
-        ...oldSkills,
-        newSkill,
-      ]);
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["Skill"] }); // Auto-refetch updated list
+      toast.success("Skill added successfully!");
     },
     onError: (error) => {
       console.error("Error adding skill:", error);
+      toast.error("Failed to add skill");
     },
   });
 };
@@ -46,13 +45,13 @@ export const useDeleteSkill = () => {
 
   return useMutation({
     mutationFn: deleteSkill,
-    onSuccess: (deletedSkillId) => {
-      queryClient.setQueryData<Skills[]>(["Skill"], (oldSkills = []) =>
-        oldSkills.filter((skill) => skill.skillId !== deletedSkillId)
-      );
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["Skill"] }); // Auto-refetch updated list
+      toast.success("Skill deleted successfully!");
     },
     onError: (error) => {
       console.error("Error deleting skill:", error);
+      toast.error("Failed to delete skill");
     },
   });
 };
@@ -73,28 +72,40 @@ export const useGetAllSkill = () => {
   });
 };
 
-// export const usePostJobMutation = () => {
-//   return useMutation(postAJob);
-// };
-
-// const { isLoading, mutate } = useMutation({
-//   mutationFn: PostJob,
-//   onSuccess: () => {
-//     toast.success("Successuffly Create Job Post");
-//   },
-// });
-
 export const usePostJob = () => {
   return useMutation({
     mutationFn: postAJob,
     onSuccess: (data) => {
       console.log(data);
       toast.success("Job posted successfully!");
-      // You can add additional success handling here
-      // Like clearing form, redirecting, etc.
+      // Additional success handling here
     },
     onError: (error: Error) => {
       toast.error(error.message || "Failed to post job");
     },
+  });
+};
+
+export const useMunicipalitySearch = (searchKey: string) => {
+  return useQuery({
+    queryKey: ["municipalities", searchKey], // Cache based on search term
+    queryFn: () => fetchSearchMunicipalities(searchKey),
+    enabled: !!searchKey, // Only fetch when there is input
+    staleTime: 60000, // Cache results for 1 minute
+  });
+};
+
+export const useGetAllMuncipalities = () => {
+  return useQuery({
+    queryKey: ["allMuncipality"],
+    queryFn: () => fetchAllMuncipality(),
+  });
+};
+
+export const useMunicipalitiesByState = (state: string, page: number, pageSize: number) => {
+  return useQuery<{ data: Municipality[]; totalPages: number }>({
+    queryKey: ["municipalities", state, page], // ✅ Unique cache key for pagination
+    queryFn: () => fetchMunicipalitiesByState(state, page, pageSize),
+    enabled: !!state, // ✅ Only fetch when a state is provided
   });
 };

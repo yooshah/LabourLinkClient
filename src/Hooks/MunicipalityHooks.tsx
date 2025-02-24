@@ -4,8 +4,11 @@ import {
   addMunicipality,
   deleteMuncipality,
   fetchAllMuncipality,
+  fetchMunicipalitiesByState,
 } from "../Services/Admin/MunicipalityServices";
 import { fetchSearchMunicipalities } from "../Services/User/MunicipalityServices";
+import toast from "react-hot-toast";
+
 interface Municipality {
   municipalityId: number;
   name: string;
@@ -26,14 +29,13 @@ export const useAddMunicipality = () => {
 
   return useMutation({
     mutationFn: addMunicipality,
-    onSuccess: (newMunicipalities) => {
-      queryClient.setQueryData<Municipality[]>(
-        ["municipalities"],
-        (oldMunicipalities = []) => [...oldMunicipalities, newMunicipalities]
-      );
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["municipalities"] }); // ✅ Refetch municipalities from server
+      toast.success("Municipality added successfully!");
     },
     onError: (error) => {
       console.error("Error adding municipality:", error);
+      toast.error("Failed to add municipality");
     },
   });
 };
@@ -43,18 +45,14 @@ export const useDeleteMunicipality = () => {
 
   return useMutation({
     mutationFn: deleteMuncipality,
-    onSuccess: (deletedMunicipalityId) => {
-      queryClient.setQueryData<Municipality[]>(
-        ["municipalities"],
-        (oldMunicipalities = []) =>
-          oldMunicipalities.filter(
-            (municipality) =>
-              municipality.municipalityId !== deletedMunicipalityId
-          )
-      );
+    onSuccess: () => {
+      // ✅ Automatically refetch the data
+      queryClient.invalidateQueries({ queryKey: ["municipalities"] });
+      toast.success("Municipality deleted successfully!");
     },
     onError: (error) => {
       console.error("Error deleting municipality:", error);
+      toast.error("Failed to delete municipality");
     },
   });
 };
@@ -72,5 +70,13 @@ export const useGetAllMuncipalities = () => {
   return useQuery({
     queryKey: ["allMuncipality"],
     queryFn: () => fetchAllMuncipality(),
+  });
+};
+
+export const useMunicipalitiesByState = (state: string, page: number, pageSize: number) => {
+  return useQuery<{ data: Municipality[]; totalPages: number }>({
+    queryKey: ["municipalities", state, page], // ✅ Unique cache key for pagination
+    queryFn: () => fetchMunicipalitiesByState(state, page, pageSize),
+    enabled: !!state, // ✅ Only fetch when a state is provided
   });
 };
