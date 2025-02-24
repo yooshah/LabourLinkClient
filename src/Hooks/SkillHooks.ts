@@ -85,3 +85,27 @@ export const usePostJob = () => {
     },
   });
 };
+
+export const useMunicipalitySearch = (searchKey: string) => {
+  return useQuery({
+    queryKey: ["municipalities", searchKey], // Cache based on search term
+    queryFn: () => fetchSearchMunicipalities(searchKey),
+    enabled: !!searchKey, // Only fetch when there is input
+    staleTime: 60000, // Cache results for 1 minute
+  });
+};
+
+export const useGetAllMuncipalities = () => {
+  return useQuery({
+    queryKey: ["allMuncipality"],
+    queryFn: () => fetchAllMuncipality(),
+  });
+};
+
+export const useMunicipalitiesByState = (state: string, page: number, pageSize: number) => {
+  return useQuery<{ data: Municipality[]; totalPages: number }>({
+    queryKey: ["municipalities", state, page], // ✅ Unique cache key for pagination
+    queryFn: () => fetchMunicipalitiesByState(state, page, pageSize),
+    enabled: !!state, // ✅ Only fetch when a state is provided
+  });
+};

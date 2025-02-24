@@ -110,7 +110,7 @@ const Municipalities: React.FC = () => {
         <button
           onClick={handlePrevious}
           disabled={page === 1}
-          className={`px-4 py-2 rounded-lg ${page === 1 ? "bg-gray-300 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 text-white"}`}
+          className={px-4 py-2 rounded-lg ${page === 1 ? "bg-gray-300 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 text-white"}}
         >
           Previous
         </button>
@@ -118,7 +118,7 @@ const Municipalities: React.FC = () => {
         <button
           onClick={handleNext}
           disabled={!data || data.length <= page * limit}
-          className={`px-4 py-2 rounded-lg ${!data || data.length <= page * limit ? "bg-gray-300 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 text-white"}`}
+          className={px-4 py-2 rounded-lg ${!data || data.length <= page * limit ? "bg-gray-300 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 text-white"}}
         >
           Next
         </button>

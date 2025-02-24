@@ -10,7 +10,7 @@ export const fetchSkills = async (
   limit: number
 ): Promise<Skills[]> => {
   const { data } = await axios.get(
-    `https://localhost:7234/api/Skill/getAllSkill?_page=${page}&_limit=${limit}`
+    https://localhost:7234/api/Skill/getAllSkill?_page=${page}&_limit=${limit}
   );
   console.log(data);
 
@@ -28,6 +28,6 @@ export const addSkill = async (newSkill: { name: string }) => {
 
 // Delete Skill Mutation
 export const deleteSkill = async (skillId: string) => {
-  await axios.delete(`https://localhost:7234/api/Skill/deleteSkill/${skillId}`);
+  await axios.delete(https://localhost:7234/api/Skill/deleteSkill/${skillId});
   return skillId;
 };

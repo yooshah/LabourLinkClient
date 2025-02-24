@@ -12,7 +12,7 @@ export const fetchMunicipalities = async (
   limit: number
 ): Promise<Municipality[]> => {
   const { data } = await axios.get(
-    `https://localhost:7234/api/Muncipality/muncipalities?_page=${page}&_limit=${limit}`
+    https://localhost:7234/api/Muncipality/muncipalities?_page=${page}&_limit=${limit}
   );
   // console.log(data);
   
@@ -32,7 +32,7 @@ export const addMunicipality = async (newMunicipality: {
 
 export const deleteMuncipality = async (Id: number) => {
   await axios.delete(
-    `https://localhost:7234/api/Muncipality/deletemuncipality${Id}`
+    https://localhost:7234/api/Muncipality/deletemuncipality${Id}
   );
   return Id;
 };
@@ -46,7 +46,7 @@ export const fetchAllMuncipality = async () => {
 
 
 // export const editMunicipality = async ({ Id:number, name:string, region }) => {
-//   const response = await axios.put(`${API_URL}/EditMunicipality/${id}`, { name, region });
+//   const response = await axios.put(${API_URL}/EditMunicipality/${id}, { name, region });
 //   return response.data;
 // };
 
@@ -57,7 +57,7 @@ export const fetchMunicipalitiesByState = async (
   pageSize: number
 ): Promise<{ data: Municipality[]; totalPages: number }> => {
   const response = await axios.get<{ data: Municipality[]; totalPages: number }>(
-    `https://localhost:7234/api/Muncipality/muncipalities${state}?page=${page}&pageSize=${pageSize}`
+    https://localhost:7234/api/Muncipality/muncipalities${state}?page=${page}&pageSize=${pageSize}
   );
   return response.data;
 };
